@@ -34,6 +34,7 @@ namespace MyFirstWinFormsApp
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.Convert = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -104,11 +105,23 @@ namespace MyFirstWinFormsApp
             this.label2.Text = "0";
             this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
+            // Convert
+            // 
+            this.Convert.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Convert.Location = new System.Drawing.Point(434, 129);
+            this.Convert.Name = "Convert";
+            this.Convert.Size = new System.Drawing.Size(96, 41);
+            this.Convert.TabIndex = 6;
+            this.Convert.Text = "Convert";
+            this.Convert.UseVisualStyleBackColor = true;
+            this.Convert.Click += new System.EventHandler(this.Convert_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(561, 194);
+            this.Controls.Add(this.Convert);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBox2);
@@ -130,6 +143,7 @@ namespace MyFirstWinFormsApp
         private System.Windows.Forms.ComboBox comboBox2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button Convert;
     }
 }
 

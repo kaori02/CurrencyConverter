@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,19 +18,24 @@ namespace MyFirstWinFormsApp
             InitializeComponent();
         }
 
+        public static string[] GetCurrencyTags()
+        {
+            // Hardcoded currency tags neccesairy to parse the ecb xml's
+            return new string[] {"eur", "usd", "jpy", "bgn", "czk", "dkk", "gbp", "huf", "ltl", "lvl"
+            , "pln", "ron", "sek", "chf", "nok", "hrk", "rub", "try", "aud", "brl", "cad", "cny", "hkd", "idr", "ils"
+            , "inr", "krw", "mxn", "myr", "nzd", "php", "sgd", "zar"};
+        }
+
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            convertCurrency();
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
-            convertCurrency();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            convertCurrency();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -42,12 +48,10 @@ namespace MyFirstWinFormsApp
 
         private void label1_Click(object sender, EventArgs e)
         {
-
         }
 
         private void label2_Click(object sender, EventArgs e)
         {
-            convertCurrency();
         }
 
         private void label3_Click(object sender, EventArgs e)
@@ -55,35 +59,91 @@ namespace MyFirstWinFormsApp
 
         }
 
+        public static float GetCurrencyRateInEuro(string currency)
+        {
+            if (currency.ToLower() == "")
+                throw new ArgumentException("Invalid Argument! currency parameter cannot be empty!");
+            if (currency.ToLower() == "eur")
+                throw new ArgumentException("Invalid Argument! Cannot get exchange rate from EURO to EURO");
+
+            try
+            {
+                // Create valid RSS url to european central bank
+                string rssUrl = string.Concat("http://www.ecb.int/rss/fxref-", currency.ToLower() + ".html");
+
+                // Create & Load New Xml Document
+                System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
+                doc.Load(rssUrl);
+
+                // Create XmlNamespaceManager for handling XML namespaces.
+                System.Xml.XmlNamespaceManager nsmgr = new System.Xml.XmlNamespaceManager(doc.NameTable);
+                nsmgr.AddNamespace("rdf", "http://purl.org/rss/1.0/");
+                nsmgr.AddNamespace("cb", "http://www.cbwiki.net/wiki/index.php/Specification_1.1");
+
+                // Get list of daily currency exchange rate between selected "currency" and the EURO
+                System.Xml.XmlNodeList nodeList = doc.SelectNodes("//rdf:item", nsmgr);
+
+                // Loop Through all XMLNODES with daily exchange rates
+                foreach (System.Xml.XmlNode node in nodeList)
+                {
+                    // Create a CultureInfo, this is because EU and USA use different sepperators in float (, or .)
+                    CultureInfo ci = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+                    ci.NumberFormat.CurrencyDecimalSeparator = ".";
+
+                    try
+                    {
+                        // Get currency exchange rate with EURO from XMLNODE
+                        float exchangeRate = float.Parse(
+                            node.SelectSingleNode("//cb:statistics//cb:exchangeRate//cb:value", nsmgr).InnerText,
+                            NumberStyles.Any,
+                            ci);
+
+                        return exchangeRate;
+                    }
+                    catch { }
+                }
+                return 0;
+            }
+            catch { return 0;}
+        }
+
+
         private void convertCurrency()
         {
             double inputNum = (double)(this.numericUpDown1.Value);
-            string in_currency = this.comboBox1.SelectedItem.ToString();
-            string out_currency = this.comboBox2.SelectedItem.ToString();
+            string in_currency = this.comboBox1.SelectedItem.ToString().ToLower();
+            string out_currency = this.comboBox2.SelectedItem.ToString().ToLower();
+            double outnum = inputNum;
 
-            double pembagi = 0.0;
-            if (out_currency == "USD") pembagi = 0.000069;
-            else if (out_currency == "IDR") pembagi = 1;
-            else if (out_currency == "SGD") pembagi = 0.000093;
-            else if (out_currency == "GBP") pembagi = 0.000050;
-            else if (out_currency == "EUR") pembagi = 5.8 / 10000000;
+            // Convert Euro to Other Currency
+            if (in_currency == "eur")
+            {
+                outnum = inputNum * GetCurrencyRateInEuro(out_currency);
+            }
 
-            double pengali = 0.0;
+            // Convert Other Currency to Euro
+            if (out_currency == "eur")
+            {
+                outnum = inputNum / GetCurrencyRateInEuro(in_currency);
+            }
 
-            if (in_currency == "USD") pengali = 14391.45;
-            else if (in_currency == "IDR") pengali = 1;
-            else if (in_currency == "SGD") pengali = 10743.06;
-            else if (in_currency == "GBP") pengali = 19949.14;
-            else if (in_currency == "EUR") pengali = 17176.45;
+            // Get the exchange rate of both currencies in euro
+            float toRate = GetCurrencyRateInEuro(out_currency);
+            float fromRate = GetCurrencyRateInEuro(in_currency);
 
-            double outnum = inputNum * pengali / pembagi;
+            // Calculate exchange rate From A to B
+            outnum = (inputNum * toRate) / fromRate;
 
             if (in_currency == out_currency) outnum = inputNum;
 
-            this.label2.Text = out_currency + " " + Math.Round(outnum, 6);
+            this.label2.Text = out_currency.ToUpper() + " " + Math.Round(outnum, 6);
         }
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+        }
+
+        private void Convert_Click(object sender, EventArgs e)
         {
             convertCurrency();
         }
