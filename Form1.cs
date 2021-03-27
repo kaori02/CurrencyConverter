@@ -18,14 +18,6 @@ namespace MyFirstWinFormsApp
             InitializeComponent();
         }
 
-        public static string[] GetCurrencyTags()
-        {
-            // Hardcoded currency tags neccesairy to parse the ecb xml's
-            return new string[] {"eur", "usd", "jpy", "bgn", "czk", "dkk", "gbp", "huf", "ltl", "lvl"
-            , "pln", "ron", "sek", "chf", "nok", "hrk", "rub", "try", "aud", "brl", "cad", "cny", "hkd", "idr", "ils"
-            , "inr", "krw", "mxn", "myr", "nzd", "php", "sgd", "zar"};
-        }
-
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
         }
@@ -63,8 +55,7 @@ namespace MyFirstWinFormsApp
         {
             if (currency.ToLower() == "")
                 throw new ArgumentException("Invalid Argument! currency parameter cannot be empty!");
-            if (currency.ToLower() == "eur")
-                throw new ArgumentException("Invalid Argument! Cannot get exchange rate from EURO to EURO");
+            if (currency.ToLower() == "eur") return 1;
 
             try
             {
@@ -115,26 +106,20 @@ namespace MyFirstWinFormsApp
             string out_currency = this.comboBox2.SelectedItem.ToString().ToLower();
             double outnum = inputNum;
 
-            // Convert Euro to Other Currency
-            if (in_currency == "eur")
-            {
-                outnum = inputNum * GetCurrencyRateInEuro(out_currency);
-            }
-
-            // Convert Other Currency to Euro
-            if (out_currency == "eur")
-            {
-                outnum = inputNum / GetCurrencyRateInEuro(in_currency);
-            }
-
-            // Get the exchange rate of both currencies in euro
-            float toRate = GetCurrencyRateInEuro(out_currency);
-            float fromRate = GetCurrencyRateInEuro(in_currency);
-
-            // Calculate exchange rate From A to B
-            outnum = (inputNum * toRate) / fromRate;
-
             if (in_currency == out_currency) outnum = inputNum;
+            // Convert Euro to Other Currency
+            else if (in_currency == "eur") outnum = inputNum * GetCurrencyRateInEuro(out_currency);
+            // Convert Other Currency to Euro
+            else if (out_currency == "eur") outnum = inputNum / GetCurrencyRateInEuro(in_currency);
+            else
+            {
+                // Get the exchange rate of both currencies in euro
+                float toRate = GetCurrencyRateInEuro(out_currency);
+                float fromRate = GetCurrencyRateInEuro(in_currency);
+
+                // Calculate exchange rate From A to B
+                outnum = (inputNum * toRate) / fromRate;
+            }
 
             this.label2.Text = out_currency.ToUpper() + " " + Math.Round(outnum, 6);
         }
