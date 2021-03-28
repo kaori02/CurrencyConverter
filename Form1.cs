@@ -16,14 +16,17 @@ namespace MyFirstWinFormsApp
         public Form1()
         {
             InitializeComponent();
+            init();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            convertCurrency();
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
+            convertCurrency();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -36,6 +39,16 @@ namespace MyFirstWinFormsApp
             this.comboBox2.SelectedItem = "IDR";
             this.comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             this.comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+        }
+        private Dictionary<string, float> dict = new Dictionary<string, float>();
+        private void init()
+        {
+            dict["usd"] = GetCurrencyRateInEuro("usd");
+            dict["idr"] = GetCurrencyRateInEuro("idr");
+            dict["sgd"] = GetCurrencyRateInEuro("sgd");
+            dict["gbp"] = GetCurrencyRateInEuro("gbp");
+            dict["eur"] = GetCurrencyRateInEuro("eur");
+            this.label2.Text = "READY";
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -108,14 +121,14 @@ namespace MyFirstWinFormsApp
 
             if (in_currency == out_currency) outnum = inputNum;
             // Convert Euro to Other Currency
-            else if (in_currency == "eur") outnum = inputNum * GetCurrencyRateInEuro(out_currency);
+            else if (in_currency == "eur") outnum = inputNum * dict[out_currency];
             // Convert Other Currency to Euro
-            else if (out_currency == "eur") outnum = inputNum / GetCurrencyRateInEuro(in_currency);
+            else if (out_currency == "eur") outnum = inputNum / dict[in_currency];
             else
             {
                 // Get the exchange rate of both currencies in euro
-                float toRate = GetCurrencyRateInEuro(out_currency);
-                float fromRate = GetCurrencyRateInEuro(in_currency);
+                float toRate = dict[out_currency];
+                float fromRate = dict[in_currency];
 
                 // Calculate exchange rate From A to B
                 outnum = (inputNum * toRate) / fromRate;
@@ -126,6 +139,7 @@ namespace MyFirstWinFormsApp
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
+            convertCurrency();
         }
 
         private void Convert_Click(object sender, EventArgs e)
