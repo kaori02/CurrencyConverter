@@ -29,10 +29,6 @@ namespace MyFirstWinFormsApp
             convertCurrency();
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-        }
-
         private void Form1_Load(object sender, EventArgs e)
         {
             this.comboBox1.SelectedItem = "IDR";
@@ -57,11 +53,6 @@ namespace MyFirstWinFormsApp
 
         private void label2_Click(object sender, EventArgs e)
         {
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
         }
 
         public static float GetCurrencyRateInEuro(string currency)
@@ -138,11 +129,6 @@ namespace MyFirstWinFormsApp
         }
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            convertCurrency();
-        }
-
-        private void Convert_Click(object sender, EventArgs e)
         {
             convertCurrency();
         }
