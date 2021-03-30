@@ -41,9 +41,9 @@ namespace MyFirstWinFormsApp
             // 
             this.numericUpDown1.Location = new System.Drawing.Point(39, 56);
             this.numericUpDown1.Maximum = new decimal(new int[] {
-            100000000,
-            0,
-            0,
+            268435456,
+            1042612833,
+            542101086,
             0});
             this.numericUpDown1.Name = "numericUpDown1";
             this.numericUpDown1.Size = new System.Drawing.Size(120, 23);
